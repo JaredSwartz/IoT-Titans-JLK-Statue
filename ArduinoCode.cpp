@@ -64,7 +64,6 @@ Color white;
 Color pink;
 Color indigo;
 Color violet;
-
 Color muxArrayA[muxX][muxY];
 Color muxArrayB[muxX][muxY];
 Color muxArrayAOld[muxX][muxY];
@@ -182,7 +181,7 @@ void setup(){
     white.setColor(255, 255, 255);
     pink.setColor(244, 41, 65);
     indigo.setColor(75, 0, 130);
-    violet.setColor(127, 0, 255)
+    violet.setColor(127, 0, 255);
 
     defaultStatue();
 
@@ -227,6 +226,11 @@ void loop(){
             }
         }
     } else if(mode == 1){
+        // for (int i = 0; i<10; i++){
+        //     for (int j = 0; j<5; j++){
+        //         setCrystal(i, j, red);
+        // }
+        // }
         setStatue(orange);
         for(int i = 11 - 1; i >= 0; i--){
             c = mergeColors(orange, white, abs(i - offset));
@@ -267,6 +271,11 @@ void loop(){
     
     else if (mode == 4){
         setStatue(blue);
+        // for (int i = 0; i<10; i++){
+        //     for (int j = 0; j<20; j++){
+        //         setCrystal(i, j, i,j,i);
+        //     }
+        // }
     }
     else if (mode == 5){
         setRing(16, red);
@@ -287,6 +296,19 @@ void loop(){
         setRing(1, orange);
         setRing(0, yellow);
     }
+    else if (mode = 6){
+    uint8_t r = 0;  
+    uint8_t g = 0;
+    uint8_t b = 0;
+    short sum = 765;
+                r = int(random(0, 255));
+            g = int(random(0, 255));
+            b = int(random(0, 255));
+        for(int i = 0; i<17; i++){
+            setRing(i, r, g, b);
+        }
+    }
+  
 
 
 
@@ -309,15 +331,21 @@ void loop(){
                 offset = -1;
                 offset_two = 5;
                 Serial.write("pink\n");
-            }else if(incoming == "blue"){
+            }else if(incoming == "blue\n"){
                 mode = 4;
                 offset = -1;
                 Serial.write("blue\n");
             }
-            else if(incoming == "rainbow"){
+            else if(incoming == "rainbow\n"){
                 mode = 5;
                 offset = -1;
                 Serial.write("RAINBOW\n");
+            }
+            else if(incoming == "random\n"){
+                mode = 6;
+                offset = -1;
+                Serial.write("RANDOM\n");
+
             }
             else{
                 Serial.write(String("UNKNOWN("+incoming).c_str());  
@@ -370,7 +398,7 @@ void setRing(int ring, uint8_t r, uint8_t g, uint8_t b){
 }
 
 void setCrystal(int row, int column, Color color){
-    sortedArray[row][column]->setColor(color);;
+    sortedArray[row][column]->setColor(color);
     //transferStatueToMux();
     //display();
 }
@@ -607,7 +635,7 @@ void randomStatue(){
         }
     }
     //transferStatueToMux();
-    display();
+    // display();
 }
 
 void fadeWheel(){
