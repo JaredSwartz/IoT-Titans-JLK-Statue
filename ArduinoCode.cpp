@@ -64,6 +64,7 @@ Color white;
 Color pink;
 Color indigo;
 Color violet;
+Color corey;
 Color muxArrayA[muxX][muxY];
 Color muxArrayB[muxX][muxY];
 Color muxArrayAOld[muxX][muxY];
@@ -182,6 +183,7 @@ void setup(){
     pink.setColor(244, 41, 65);
     indigo.setColor(75, 0, 130);
     violet.setColor(127, 0, 255);
+    corey.setColor(17, 158, 209);
 
     defaultStatue();
 
@@ -213,6 +215,8 @@ float offset_two = 5;
 float diff = 0;
 float diff_two = 0;
 Color c;
+Color c2;
+Color c3;
 uint8_t mode = 1;
 String incoming = "";
 void loop(){
@@ -226,11 +230,6 @@ void loop(){
             }
         }
     } else if(mode == 1){
-        // for (int i = 0; i<10; i++){
-        //     for (int j = 0; j<5; j++){
-        //         setCrystal(i, j, red);
-        // }
-        // }
         setStatue(orange);
         for(int i = 11 - 1; i >= 0; i--){
             c = mergeColors(orange, white, abs(i - offset));
@@ -240,42 +239,14 @@ void loop(){
         offset_two += 0.1;
         if(offset > 11){
             offset = -1;
-        }
+        }    
     } else if(mode == 2){
-        setStatue(off);
+        setStatue(off);        
     } else if (mode == 3){
         setStatue(pink);
-    }
-        
-        
-//        for(int i = 11 - 1; i >= 0; i--){
-//            diff = abs(i - offset);
-//            diff_two = abs(i - offset_two);
-//            if(diff_two < 2){
-//                c = mergeColors(pink, yellow, diff_two);
-//            }else{
-//                c = mergeColors(pink, cyan, diff);
-//            }
-//            setRing(i, c);
-//        }
-//        offset += 0.2;
-//        offset_two += 0.2;
-//        if(offset > 11){
-//            offset = -1;
-//        }
-//        if(offset_two > 11){
-//          offset_two = -1;
-//        }
-        // setRing(9, yellow);
-        // setRing(10, cyan);
-    
+    }    
     else if (mode == 4){
         setStatue(blue);
-        // for (int i = 0; i<10; i++){
-        //     for (int j = 0; j<20; j++){
-        //         setCrystal(i, j, i,j,i);
-        //     }
-        // }
     }
     else if (mode == 5){
         setRing(16, red);
@@ -297,16 +268,45 @@ void loop(){
         setRing(0, yellow);
     }
     else if (mode = 6){
-    uint8_t r = 0;  
-    uint8_t g = 0;
-    uint8_t b = 0;
-    short sum = 765;
-                r = int(random(0, 255));
-            g = int(random(0, 255));
-            b = int(random(0, 255));
-        for(int i = 0; i<17; i++){
-            setRing(i, r, g, b);
+        setStatue(corey);
+        for(int i = 11 - 1; i >= 0; i--){
+            c = mergeColors(corey, white, abs(i - offset));
+            c2 = mergeColors(corey, white, abs(i-offset_two));
+            setRing(abs(10-i), c);
+            setRing(abs(9-i), c2);
+
         }
+        offset += 0.1;
+        offset_two += 0.2;
+        if(offset > 11){
+            offset = -1;
+            offset_two = -1;
+        }
+    }
+    else if(mode = 7){
+        setStatue(off);
+        // setColumn(1, orange);
+        // setStatue(orange);
+        // for(int i = 0; i < muxX; i++){
+        //     digitalWrite(innerMux[0], bitRead(i, 0));
+        //     digitalWrite(innerMux[1], bitRead(i, 1));
+        //     digitalWrite(innerMux[2], bitRead(i, 2));
+        //     digitalWrite(innerMux[3], bitRead(i, 3));
+
+        //     for(int j = 0; j < muxY; j++){
+        //         if((*muxArray)[i][j].getMuxColor()!=(*muxArrayOld)[i][j].getMuxColor()){
+        //             digitalWrite(outerMux[0], bitRead(j, 0));
+        //             digitalWrite(outerMux[1], bitRead(j, 1));
+        //             digitalWrite(outerMux[2], bitRead(j, 2));
+        //             digitalWrite(outerMux[3], bitRead(j, 3));
+
+        //             mux->fill((*muxArray)[i][j].getMuxColor());
+        //             (*muxArrayOld)[i][j].setColor((*muxArray)[i][j]);
+
+        //             mux->show();
+        //         }
+        //     }
+        // }    
     }
   
 
@@ -341,11 +341,14 @@ void loop(){
                 offset = -1;
                 Serial.write("RAINBOW\n");
             }
-            else if(incoming == "random\n"){
+            else if(incoming == "bluering\n"){
                 mode = 6;
                 offset = -1;
-                Serial.write("RANDOM\n");
-
+                Serial.write("BLUERING\n");
+            }
+            else if(incoming == "test\n"){
+                mode = 7;
+                Serial.write("TEST\n");
             }
             else{
                 Serial.write(String("UNKNOWN("+incoming).c_str());  
@@ -647,93 +650,78 @@ void fadeWheel(){
     uint8_t g = 0;
     uint8_t b = 0;
 
-    while(true){
-        // Off
-        if(r == 0 && g == 0 && b == 0){
-            for(b = 0; b < 255; b += speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 0;
-            g = 0;
-            b = 255;
+    
+    // Off
+    if(r == 0 && g == 0 && b == 0){
+        for(b = 0; b < 255; b += speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
         }
-        // Blue
-        if(r == 0 && g == 0 && b == 255){
-            for(g = 0; g < 255; g += speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 0;
-            g = 255;
-            b = 255;
-        }
-        // Teal
-        if(r == 0 && g == 255 && b == 255){
-            for(b = 255; b > 0; b -= speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 0;
-            g = 255;
-            b = 0;
-        }
-        // Green
-        if(r == 0 && g == 255 && b == 0){
-            for(r = 0; r < 255; r += speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 255;
-            g = 255;
-            b = 0;
-        }
-        // Yellow
-        if(r == 255 && g == 255 && b == 0){
-            for(g = 255; g > 0; g -= speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 255;
-            g = 0;
-            b = 0;
-        }
-        // Red
-        if(r == 255 && g == 0 && b == 0){
-            for(b = 0; b < 255; b += speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 255;
-            g = 0;
-            b = 255;
-        }
-        // Pink
-        if(r == 255 && g == 0 && b == 255){
-            for(r = 255; r > 0; r -= speed){
-                fadeColor.setColor(r, g, b);
-                setStatue(fadeColor);
-                //transferStatueToMux();
-                display();
-            }
-            r = 0;
-            g = 0;
-            b = 255;
-        }
+        r = 0;
+        g = 0;
+        b = 255;
     }
-
+    // Blue
+    if(r == 0 && g == 0 && b == 255){
+        for(g = 0; g < 255; g += speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
+        
+        }
+        r = 0;
+        g = 255;
+        b = 255;
+    }
+    // Teal
+    if(r == 0 && g == 255 && b == 255){
+        for(b = 255; b > 0; b -= speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
+        }
+        r = 0;
+        g = 255;
+        b = 0;
+    }
+    // Green
+    if(r == 0 && g == 255 && b == 0){
+        for(r = 0; r < 255; r += speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
+        r = 255;
+        g = 255;
+        b = 0;
+    }
+    // Yellow
+    if(r == 255 && g == 255 && b == 0){
+        for(g = 255; g > 0; g -= speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
+        }
+        r = 255;
+        g = 0;
+        b = 0;
+    }
+    // Red
+    if(r == 255 && g == 0 && b == 0){
+        for(b = 0; b < 255; b += speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
+        }
+        r = 255;
+        g = 0;
+        b = 255;
+    }
+    // Pink
+    if(r == 255 && g == 0 && b == 255){
+        for(r = 255; r > 0; r -= speed){
+            fadeColor.setColor(r, g, b);
+            setStatue(fadeColor);
+        }
+        r = 0;
+        g = 0;
+        b = 255;
+    }
+}
 }
 
 
