@@ -9,7 +9,7 @@
 #define SIG1 38        // using pin 38 for signal 1 (mux array 1)
 #define SIG2 51        // using pin 51 for data signal 2 (mux array 2)
 #define BRIGHTNESS 128 // level of brightness of all LEDs (8 bit value --> [0, 255])const int rings = 17;
-const uint8_t rings = 17;
+const uint8_t rings = 19;
 const uint8_t crystals = 22;
 
 const uint8_t pixel = 24;
@@ -239,7 +239,6 @@ void loop()
     if (mode == 0) // increase column
     {
         currentColumn += 1;
-        setCrystalUnsorted(currentRow, currentColumn, white);
         mode = 4;
         // setStatue(green);
         // for (int i = 11 - 1; i >= 0; i--)
@@ -256,16 +255,34 @@ void loop()
     }
     else if (mode == 1) // default
     {
+        // setStatue(off);
 
+        // setRing(16, red);
+        // setRing(15, orange);
+        // setRing(14, yellow);
+        // setRing(13, green);
+        // setRing(12, blue);
+        // setRing(11, indigo);
+        // setRing(10, violet);
+        // setRing(9, red);
+        // setRing(8, orange);
+        // setRing(7, yellow);
+        // setRing(6, green);
+        // setRing(5, blue);
+        // setRing(4, indigo);
+        // setRing(3, violet);
+        // setRing(2, red);
+        // setRing(1, orange);
+        // setRing(0, yellow);
         setStatue(orange);
-        for (int i = 17 - 1; i >= 0; i--)
+        for (int i = 10 - 1; i >= 0; i--)
         {
             c = mergeColors(orange, white, abs(i - offset));
             setRing(i, c);
         }
         offset += 0.1;
         offset_two += 0.1;
-        if (offset > 17)
+        if (offset > 10)
         {
             offset = -1;
         }
@@ -280,9 +297,11 @@ void loop()
     else if (mode == 3) // increase row
     {
         // setStatue(pink);
+        // currentRow = loopCounter / 22;
+        // currentColumn = round(loopCounter) % 16;
         currentRow += 1;
-        setCrystalUnsorted(currentRow, currentColumn, white);
-        // setRing(currentRow, blue);
+        // setCrystalUnsorted(currentRow, currentColumn, white);
+        setRing(currentRow, blue);
         mode = 4;
 
         // loopCounter += 0.001;
@@ -294,33 +313,50 @@ void loop()
     else if (mode == 5)
     {
         setMuxA();
+        setRing(16, red);
+        setRing(15, orange);
+        setRing(14, yellow);
+        setRing(13, green);
+        setRing(12, blue);
+        setRing(11, indigo);
+        setRing(10, violet);
+        setRing(9, red);
+        setRing(8, orange);
+        setRing(7, yellow);
+        setRing(6, green);
+        setRing(5, blue);
+        setRing(4, indigo);
+        setRing(3, violet);
+        setRing(2, red);
+        setRing(1, orange);
+        setRing(0, yellow);
     }
-    else if (mode == 6)
+    else if (mode = 6)
     {
         setMuxB();
+
+        // setStatue(corey);
+        // for (int i = 11 - 1; i >= 0; i--)
+        // {
+        //     c = mergeColors(corey, white, abs(i - offset));
+        //     c2 = mergeColors(corey, white, abs(i - offset_two));
+        //     setRing(abs(10 - i), c);
+        //     setRing(abs(9 - i), c2);
+        // }
+        // offset += 0.1;
+        // offset_two += 0.2;
+        // if (offset > 11)
+        // {
+        //     offset = -1;
+        //     offset_two = -1;
+        // }
     }
-    else if (mode == 7)
+    else if (mode = 7)
     {
-        setStatue(blue);
-    }
-    else if (mode == 8)
-    {
-        setStatue(green);
-        for (int i = 18; i >= 0; i--)
-        {
-            if (i % 2 == 0)
-            {
-                setRing(i, red);
-            }
-            else
-            {
-                setRing(i, green);
-            }
-        }
-    }
-    else if (mode == 9)
-    {
-        setStatue(pink);
+        // setStatue(off);
+        setRingDebug();
+        fullRow += 1;
+        mode = 4;
     }
 
     display();
@@ -370,20 +406,10 @@ void loop()
                 offset = -1;
                 Serial.write("BLUERING\n");
             }
-            else if (incoming == "blueblue\n")
+            else if (incoming == "test\n")
             {
                 mode = 7;
-                Serial.write("blueblue\n");
-            }
-            else if (incoming == "christmaschritmas\n")
-            {
-                mode = 8;
-                Serial.write("christmaschritmas\n");
-            }
-            else if (incoming == "pinkpink\n")
-            {
-                mode = 9;
-                Serial.write("pinkpink\n");
+                Serial.write("TEST\n");
             }
             else
             {
@@ -461,7 +487,7 @@ void setCrystalUnsorted(int row, int column, Color color)
 {
     Color towerColor[7] = {red, orange, yellow, green, blue, indigo, white};
     int tempRow = 0;
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < 13; i++)
     {
         for (int j = 0; j < 22; j++)
         {
@@ -493,7 +519,7 @@ void setCrystalUnsorted(int row, int column, Color color)
             }
         }
     }
-    muxArrayA[row][column].setColor(color);
+    muxArrayB[row][column].setColor(color);
     // Serial.print("row: " + row);
     // Serial.print("Column: " + column);
 
@@ -903,9 +929,7 @@ void fadeWheel()
 void setupSortedArray()
 {
     short conversionArr[] = {
-        0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15, 128, 136, 132, 140, 130, -1, 138, 134, 142, 129, 137, 133, 141, 131, 139, 135, 143, 64, 72, 68, 76, 66, 74, 70, 78, 65, -1, -1, 73, 69, 77, 67, 75, 71, 79, 192, 200, 196, 204, 194, 202, 198, 206, 193, 201, 197, 205, 195, 203, -1, 172, 162, 170, 166, 174, 161, 169, 165, 173, 163, 171, 167, 175, 96, 104, 100, 108, 98, 106, 102, 110, -1, 199, 207, 32, 40, 36, 44, 34, 42, 38, 46, 33, 41, 37, 45, 35, 43, 39, 47, 160, 168, 164, -1, 105, 101, 109, 99, 107, 103, 111, 224, 232, 228, 236, 226, 234, 230, 238, 225, 233, 229, 237, 227, 97, -1, 152, 148, 156, 146, 154, 150, 158, 145, 153, 149, 157, 147, 155, 151, 159, -1, 88, 84, 92, 82, -1, -1, 90, 86, 94, 81, 89, 85, 93, 83, 91, 87, 95, 208, 216, 212, 220, 210, 218, 214, 222, 209, -1, -1, 217, 213, 221, 211, 219, 215, 223, 48, 56, 52, 60, 50, 58, 54, 62, 49, 57, 53, 61, 51, -1, -1, 59, 55, 63, 176, 184, 180, 188, 178, 186, 182, 190, 177, 185, 181, 189, 179, 187, 183, 191, 112, -1, -1, 242, 120, 116, 124, 114, 122, 118, 126, 113, 121, 117, 125, 115, 123, 119, 127, 240, 248, 244, 252, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 269, 259, 267, -1, 271, 384, 392, 388, 396, 386, 394, 390, 398, 385, 393, 389, 397, 387, 395, 391, -1, -1, 235, 231, 239, -1, -1, 20, -1, 18, 26, 30, 17, -1, 21, 29, 19, 27, 23, 31, 144, -1, -1, -1, 320, 328, 324, 332, 322, 330, 326, 334, 321, 329, 325, 333, 323, 331, 327, 335, 448, 456, 452, 460, 399, -1, 450, 458, 462, 449, 457, 461, 451, 459, 455, 463, 288, 296, 292, 300, 290, 298, 294, 302, -1, -1, -1, -1, 289, 297, 293, 420, 301, 291, 299, 295, 303, 416, 424, 417, 428, 418, 426, 422, 421, 430, 429, 425, -1, -1
-
-    };
+        0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15, 128, 136, 132, 140, 130, -1, 138, 134, 142, 129, 137, 133, 141, 131, 139, 135, 143, 64, 72, 68, 76, 66, 74, 70, 78, 65, -1, -1, 73, 69, 77, 67, 75, 71, 79, 192, 200, 196, 204, 194, 202, 198, 206, 193, 201, 197, 205, 195, 203, -1, 172, 162, 170, 166, 174, 161, 169, 165, 173, 163, 171, 167, 175, 96, 104, 100, 108, 98, 106, 102, 110, -1, 199, 207, 32, 40, 36, 44, 34, 42, 38, 46, 33, 41, 37, 45, 35, 43, 39, 47, 160, 168, 164, -1, 105, 101, 109, 99, 107, 103, 111, 224, 232, 228, 236, 226, 234, 230, 238, 225, 233, 229, 237, 227, 97, -1, 152, 148, 156, 146, 154, 150, 158, 145, 153, 149, 157, 147, 155, 151, 159, -1, 88, 84, 92, 82, -1, -1, 90, 86, 94, 81, 89, 85, 93, 83, 91, 87, 95, 208, 216, 212, 220, 210, 218, 214, 222, 209, -1, -1, 217, 213, 221, 211, 219, 215, 223, 48, 56, 52, 60, 50, 58, 54, 62, 49, 57, 53, 61, 51, -1, -1, 59, 55, 63, 176, 184, 180, 188, 178, 186, 182, 190, 177, 185, 181, 189, 179, 187, 183, 191, 112, -1, -1, 242, 120, 116, 124, 114, 122, 118, 126, 113, 121, 117, 125, 115, 123, 119, 127, 240, 248, 244, 252, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 289, 297, 293, 420, 301, 291, 299, 295, -1, -1, -1, -1, 269, 259, 267, -1, 271, 384, 392, 388, 396, 386, 394, 390, 398, 385, 393, 389, 397, 387, 395, 391, -1, -1, 235, 259, -1, -1, 24, -1, 28, -1, 26, -1, -1, -1, -1, -1, -1, 27, 23, -1, -1, -1, -1, -1, 320, 328, 324, 332, 322, 330, 326, 334, 321, 329, 325, 333, 323, 331, 327, 335, 448, 456, 452, 460, 399, -1, 450, 458, 462, 449, 457, 461, 451, 459, 455, 463, 288, 296, 292, 300, 290, 298, 294, 302, -1, -1, -1, -1, 289, 297, 293, 420, 301, 291, 299, 295, 303, 416, 424, 417, 428, 418, 426, 422, 421, 430, 429, 425, -1, -1, 303, 416, 424, 417, 428, 418, 426, 422, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 421, 430, 429, 425, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
     short value;
     uint8_t y;
     uint8_t x;
